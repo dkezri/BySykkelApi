@@ -1,0 +1,33 @@
+{
+  "last_updated": 1684825319,
+  "ttl": 10,
+  "version": "2.2",
+  "data": {
+    "stations": [
+      {
+        "station_id": "2358",
+        "name": "Aker Brygge 3 mot Fergene",
+        "address": "Dokkveien 1, 0250 Oslo",
+        "rental_uris": {
+          "android": "oslobysykkel://stations/2358",
+          "ios": "oslobysykkel://stations/2358"
+        },
+        "lat": 59.91087115068967,
+        "lon": 10.729828757277915,
+        "capacity": 15
+      },
+      {
+        "station_id": "2357",
+        "name": "Aker Brygge 2 mot Rådhusplassen",
+        "address": "Brynjulf Bulls plass 2, 0250 Oslo",
+        "rental_uris": {
+          "android": "oslobysykkel://stations/2357",
+          "ios": "oslobysykkel://stations/2357"
+        },
+        "lat": 59.91111544486938,
+        "lon": 10.730396895054923,
+        "capacity": 24
+      }
+    ]
+  }
+}

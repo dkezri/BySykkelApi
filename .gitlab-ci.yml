@@ -1,0 +1,104 @@
+variables:
+  PROJECT_NAME: "OsloBySykkelApi"
+  PROJECT_NAME_LOWER: "OsloBySykkelApi"
+
+stages:
+  - build
+  - test
+  - deploy-dev
+  - deploy-test
+  - deploy-staging
+  - deploy-prod
+
+build-job:
+  stage: build
+  tags:
+    - ConnectAwsLinux
+  script:
+    - echo "Compiling the code..."
+    - dotnet build
+    - echo "Compile complete."
+
+unit-test-job:
+  stage: test
+  tags:
+    - ConnectAwsLinux
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - dotnet test
+    - echo "Tests finished..."
+
+deploy-dev-job:
+  stage: deploy-dev
+  environment:
+    name: dev
+  tags:
+    - ConnectAwsLinux
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^feature.*/
+      when: manual
+      allow_failure: true
+  script:
+    - echo "Deploying application..."
+    - docker build -f $PROJECT_NAME/Dockerfile -t reforged/${PROJECT_NAME_LOWER}-dev .
+    - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com
+    - docker tag reforged/${PROJECT_NAME_LOWER}-dev $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:latest
+    - docker push $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:latest
+    - aws ecs update-service --cluster AzetsConnect-Reforged-Dev-Cluster --service AzetsConnect-Reforged-Dev-$PROJECT_NAME-Fargate --force-new-deployment
+    - echo "Application successfully deployed."
+
+deploy-test-job:
+  stage: deploy-test
+  environment:
+    name: connect-reforged-test
+  tags:
+    - ConnectAwsLinux
+  only:
+    refs:
+      - "develop"
+  when: manual
+  script:
+    - echo "Deploying application..."
+    - docker build -f $PROJECT_NAME/Dockerfile -t reforged/${PROJECT_NAME_LOWER}-test .
+    - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com
+    - docker tag reforged/${PROJECT_NAME_LOWER}-test $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:test
+    - docker push $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:test
+    - aws ecs update-service --cluster Connect-Reforged-Test-Cluster --service Connect-Reforged-Test-$PROJECT_NAME-Fargate --force-new-deployment
+    - echo "Application successfully deployed."
+deploy-staging-job:
+  stage: deploy-staging
+  environment:
+    name: connect-reforged-staging
+  tags:
+    - ConnectAwsLinux
+  only:
+    refs:
+      - "staging"
+  when: manual
+  script:
+    - echo "Deploying application..."
+    - docker build -f $PROJECT_NAME/Dockerfile -t reforged/${PROJECT_NAME_LOWER}-staging .
+    - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com
+    - docker tag reforged/${PROJECT_NAME_LOWER}-staging $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:staging
+    - docker push $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:staging
+    - aws ecs update-service --cluster Connect-Reforged-Staging-Cluster --service Connect-Reforged-Staging-$PROJECT_NAME-Fargate --force-new-deployment
+    - echo "Application successfully deployed."
+
+deploy-prod-job:
+  stage: deploy-prod
+  environment:
+    name: connect-reforged
+  tags:
+    - ConnectAwsLinux
+  only:
+    refs:
+      - "master"
+  when: manual
+  script:
+    - echo "Deploying application..."
+    - docker build -f $PROJECT_NAME/Dockerfile -t reforged/${PROJECT_NAME_LOWER}-prod .
+    - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com
+    - docker tag reforged/${PROJECT_NAME_LOWER}-prod $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:prod
+    - docker push $AWS_ACCOUNT.dkr.ecr.eu-north-1.amazonaws.com/azetsconnect-reforged-${PROJECT_NAME_LOWER}:prod
+    - aws ecs update-service --cluster Connect-Reforged-Cluster --service Connect-Reforged-$PROJECT_NAME-Fargate --force-new-deployment
+    - echo "Application successfully deployed."
