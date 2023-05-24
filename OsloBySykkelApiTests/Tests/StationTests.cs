@@ -14,12 +14,21 @@ namespace OsloBySykkelApiTests.Tests
         }
 
         [Fact]
-        public async Task GetAllValuesTests()
+        public async Task GetAllStationTests()
         {
             var url = "/stations";
             var getAllResponse = await _httpClient.GetAsync<List<StationModel>>(url);
             getAllResponse.Should().NotBeNull();
-            getAllResponse.Count.Should().Be(2);
+            getAllResponse.Count.Should().BeGreaterThan(2);
+        }
+
+        [Fact]
+        public async Task GetNearstStationsTests()
+        {
+            var url = "/stations?latitude=59.9131891&longitude=10.7897605";
+            var getAllResponse = await _httpClient.GetAsync<List<StationModel>>(url);
+            getAllResponse.Should().NotBeNull();
+            getAllResponse.Count.Should().BeGreaterThan(0);
         }
     }
 }

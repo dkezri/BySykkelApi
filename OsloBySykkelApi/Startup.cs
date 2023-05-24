@@ -14,6 +14,7 @@ namespace OsloBySykkelApi
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerGen();
@@ -30,7 +31,7 @@ namespace OsloBySykkelApi
                 app.UseSwaggerUI();
             }
 
-
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseHttpsRedirection();
 
             app.UseRouting();

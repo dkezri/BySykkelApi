@@ -5,9 +5,9 @@ namespace OsloBySykkelApi.Services
 {
     public interface IBySykkelService
     {
-        public Task<SystemInformation> GetSystemInformation();
+        public Task<SystemInformation> GetSystemInformationAsync();
         public Task<StationInformationRoot> GetStationInformationAsync();
-        public Task<StationStatusRoot> GetStationStatus();
+        public Task<StationStatusRoot> GetStationStatusAsync();
     }
 
     public class BySykkelService : IBySykkelService
@@ -21,7 +21,7 @@ namespace OsloBySykkelApi.Services
             _httpClient.BaseAddress = new Uri("https://gbfs.urbansharing.com/oslobysykkel.no/");
         }
 
-        public async Task<SystemInformation> GetSystemInformation()
+        public async Task<SystemInformation> GetSystemInformationAsync()
         {
             var systemInformation= await _httpClient.GetAsync<SystemInformation>("system_information.json");
             return systemInformation;
@@ -32,7 +32,7 @@ namespace OsloBySykkelApi.Services
             return stationInformation;
         }
 
-        public async Task<StationStatusRoot> GetStationStatus()
+        public async Task<StationStatusRoot> GetStationStatusAsync()
         {
             var stationStatus = await _httpClient.GetAsync<StationStatusRoot>("station_status.json");
             return stationStatus;

@@ -15,7 +15,7 @@ namespace OsloBySykkelApiTests.Core
             return stationInformation;
         }
 
-        public async Task<StationStatusRoot> GetStationStatus()
+        public async Task<StationStatusRoot> GetStationStatusAsync()
         {
             var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JsonData", "StationStatus.json");
             var jsonData = File.ReadAllText(filePath);
@@ -23,7 +23,7 @@ namespace OsloBySykkelApiTests.Core
             return stationStatus;
         }
 
-        public Task<SystemInformation> GetSystemInformation()
+        public Task<SystemInformation> GetSystemInformationAsync()
         {
             throw new NotImplementedException();
         }

@@ -10,5 +10,6 @@ namespace OsloBySykkelApi.Models
         public int Capacity { get; set; }
         public int? NumBikesAvailable { get; set; }
         public int? NumDocksAvailable { get; set; }
+        public double Distance { get; set; }
     }
 }
