@@ -15,7 +15,7 @@ namespace OsloBySykkelApi.Controllers
         {
             this.bySykkelService = bySykkelService;
         }
-
+        /*
         [HttpGet("/stationinformation")]
         [ProducesResponseType(typeof(IEnumerable<StationInformationRoot>), 200)]
         public async Task<IActionResult> GetStationInformationAsync()
@@ -30,6 +30,7 @@ namespace OsloBySykkelApi.Controllers
             var stationInformation = await bySykkelService.GetStationStatusAsync();
             return Ok(stationInformation);
         }
+        */
         [HttpGet("/stations")]
         [ProducesResponseType(typeof(IEnumerable<StationModel>), 200)]
 
